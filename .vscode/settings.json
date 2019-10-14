@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "ostream": "cpp"
+    },
+
+    "code-runner.runInTerminal": true,
+    "code-runner.fileDirectoryAsCwd": true,
+    "code-runner.executorMap": {
+        "cpp": "g++ $fileName -o $fileNameWithoutExt.out && ./$fileNameWithoutExt.out"
+    },
+    "editor.renderWhitespace": "all"
+}
