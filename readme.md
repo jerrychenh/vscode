@@ -22,7 +22,7 @@
 - Enter 'Run Task'; 
 - Choose the corresponding label in tasks.json
 
-**Day 1**
+**1**
 ```
 ReverseList: easy
 Middle node of list: easy, dummy head;
@@ -33,7 +33,12 @@ Rotate list right: medium, get list len and mod
 MergeKList: hard, base on merge two list.
 ```
 
-**Day n**
+**2**
+```
+ReverseListKGroup: 3, take care of boundary condition
+```
+
+**n**
 ```
 
 ```
