@@ -1,62 +1,64 @@
 #include <iostream>
+#include <map>
 #include <numeric>
+#include <set>
 #include <vector>
 
 using namespace std;
 
 class Solution {
 public:
+
+    vector<int> count;
+    vector<int> ans;
+    int num;
+
     vector<int> sumOfDistancesInTree(int N, vector<vector<int>>& edges) {
-        vector<vector<int>> distances(N, vector<int>(N, 0));
-        vector<int> sumDist(N, 0);
+        num = N;
+        vector<set<int>> connections(N);
 
-        for(vector<int> edge: edges){
-            distances[edge[0]][edge[1]] = 1;
-            distances[edge[1]][edge[0]] = 1;
-        }
-
-        vector<int> level;
-        vector<int> nxt_level;
-        for(int i = 0; i < N; ++i){
-            for(int j = 0; j < N; ++j){
-                if(distances[i][j] != 0){
-                    level.push_back(j);
-                }
-            }
-
-            while(!level.empty()){
-                int tmp = level.back();
-                level.pop_back();
-                for(int k = 0; k < N; ++k){
-                    if(k == i) continue;
-                    if(distances[tmp][k] != 0){
-                        int d = distances[i][tmp] + distances[tmp][k];
-                        if(distances[i][k] > 0){
-                            if(d < distances[i][k]){
-                                nxt_level.push_back(k);
-                                distances[i][k] = d;
-                                distances[k][i] = d;
-                            }
-                        } else {
-                            nxt_level.push_back(k);
-                            distances[i][k] = d;
-                            distances[k][i] = d;
-                        }
-                    }
-                }
-
-                if(level.empty() && !nxt_level.empty()){
-                    level = nxt_level;
-                    nxt_level.clear();
-                }
-            }
+        for(auto v : edges){
+            connections[v[0]].insert(v[1]);
+            connections[v[1]].insert(v[0]);
         }
 
         for(int i = 0; i < N; ++i){
-            sumDist[i] = std::accumulate(distances[i].begin(), distances[i].end(), 0);
+            count.push_back(1);
+            ans.push_back(0);
         }
 
-        return sumDist;
+        dfs(0, -1, connections);
+        // now, only the root's (ans[0]) value is correct
+        // dfs and comput top down to correct the ans
+        dfs1(0, -1, connections);
+        return ans;
+    }
+
+    // compute num of nodes in  subtree
+    // compute num of connections in subtree
+    // dfs: compute count/ans bottom up
+    void dfs(int subtree, int parent, vector<set<int>>& connections){
+        for(auto child : connections[subtree]){
+            if(child == parent) continue;
+
+            dfs(child, subtree, connections);
+            count[subtree] += count[child];
+            ans[subtree] += (ans[child] + count[child]);
+        }
+    }
+
+    // dfs: compute ans top down
+    void dfs1(int subtree, int parent, vector<set<int>>& connections){
+        for(auto child : connections[subtree]){
+            if(child == parent) continue;
+
+            // comput child connections,
+            // (num - count[child]) - count[child] is the num of node diff
+            // between child and parent subtree(imagine break the connection between parent/child),
+            // you will get two trees with parent/child as root separately
+            ans[child] = ans[subtree] + (num - count[child]) - count[child];
+            dfs1(child, subtree, connections);
+        }
     }
 };
 
